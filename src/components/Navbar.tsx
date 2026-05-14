@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { getOrCreateCurrentUser, seedIfEmpty, setCurrentUserName } from '../lib/db'
 
 export function Navbar() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
   const [name, setName] = useState(() => getOrCreateCurrentUser().name)
   const [editingName, setEditingName] = useState(false)
 
@@ -14,7 +16,7 @@ export function Navbar() {
   const displayName = useMemo(() => name.trim() || 'Visitante', [name])
 
   return (
-    <header className="nav">
+    <header className={isHome ? 'nav nav--dark' : 'nav'}>
       <div className="container navInner">
         <Link className="brand" to="/">
           EntulhoZero

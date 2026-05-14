@@ -44,6 +44,18 @@ textarea {
 
 .appShell {
   min-height: 100vh;
+  overflow-x: clip;
+}
+
+.main {
+  flex: 1;
+}
+
+.main--fullBleed {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .nav {
@@ -53,6 +65,38 @@ textarea {
   backdrop-filter: blur(10px);
   background: rgba(248, 250, 252, 0.75);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.nav--dark {
+  background: rgba(3, 7, 18, 0.55);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav--dark .brand {
+  color: #f8fafc;
+}
+
+.nav--dark .brandTag {
+  color: rgba(248, 250, 252, 0.55);
+}
+
+.nav--dark .navLinks a {
+  color: rgba(248, 250, 252, 0.75);
+}
+
+.nav--dark .navLinks a.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nav--dark .linkButton {
+  color: rgba(248, 250, 252, 0.9);
+}
+
+.nav--dark .btnSecondary {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f1f5f9;
 }
 
 .navInner {
