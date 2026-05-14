@@ -477,3 +477,66 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+/* About / Sobre (science project) */
+.aboutPage .aboutLead {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.aboutBlock + .aboutBlock {
+  margin-top: 0;
+}
+
+.aboutQuestion {
+  margin: 0 0 14px;
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.aboutAnswer p {
+  margin: 0 0 12px;
+  line-height: 1.7;
+  color: rgba(15, 23, 42, 0.88);
+}
+
+.aboutAnswer p:last-child {
+  margin-bottom: 0;
+}
+
+.aboutAnswer ul {
+  margin: 0 0 12px;
+  padding-left: 1.25rem;
+  line-height: 1.65;
+  color: rgba(15, 23, 42, 0.88);
+}
+
+.aboutAnswer li {
+  margin-bottom: 8px;
+}
+
+.aboutAnswer li:last-child {
+  margin-bottom: 0;
+}
+
+.aboutNote {
+  margin-top: 14px !important;
+  padding-top: 14px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.aboutValues {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.75;
+  color: rgba(15, 23, 42, 0.88);
+}
+
+.aboutFooter {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}

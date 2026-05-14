@@ -33,6 +33,9 @@ export function Navbar() {
           <NavLink to="/inbox" className={({ isActive }) => (isActive ? 'active' : undefined)}>
             Inbox
           </NavLink>
+          <NavLink to="/sobre" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+            Sobre
+          </NavLink>
         </nav>
 
         <div className="userPill">
