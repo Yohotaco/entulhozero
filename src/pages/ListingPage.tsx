@@ -13,7 +13,16 @@ import { SafeImage } from '../components/SafeImage'
 import { getCategoryImage } from '../data/homeGallery'
 import { useDbTick } from '../hooks/useDbTick'
 import { useSettings } from '../settings/SettingsContext'
+import type { TimestampFormat } from '../settings/types'
 import { useNavigate } from 'react-router-dom'
+
+function formatMsgTime(ts: number, format: TimestampFormat) {
+  return new Date(ts).toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: format === '12h',
+  })
+}
 
 export function ListingPage() {
   const { listingId } = useParams()
@@ -125,7 +134,7 @@ export function ListingPage() {
                   messages.map((m) => (
                     <div key={m.id} className={m.senderId === me.id ? 'msg mine' : 'msg'}>
                       <div className="msgText">{m.text}</div>
-                      <div className="msgMeta muted">{new Date(m.createdAt).toLocaleTimeString()}</div>
+                      <div className="msgMeta muted">{formatMsgTime(m.createdAt, settings.timestampFormat)}</div>
                     </div>
                   ))
                 )}
@@ -142,7 +151,20 @@ export function ListingPage() {
                   setText('')
                 }}
               >
-                <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Escreve uma mensagem..." />
+                <input
+                  className="input"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (!settings.chatEnterToSend || e.key !== 'Enter' || e.shiftKey) return
+                    e.preventDefault()
+                    const t = text.trim()
+                    if (!t || !convo) return
+                    sendMessage(convo.id, me.id, t)
+                    setText('')
+                  }}
+                  placeholder="Escreve uma mensagem..."
+                />
                 <button className="btn" type="submit">
                   Enviar
                 </button>

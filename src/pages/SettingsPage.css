@@ -1,3 +1,26 @@
+.settingsPageHeader {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.settingsHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.settingsBackLanding {
+  white-space: nowrap;
+}
+
+.settingsSavedBadge {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: hsl(var(--accent-h, 142) 55% 32%);
+  font-weight: 600;
+}
+
 .settingsPage .settingsSection {
   margin-bottom: 0;
 }

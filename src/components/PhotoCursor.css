@@ -1,5 +1,3 @@
-/* Cursor estilo ConfirmAí: bloom + anel fino + ponto verde */
-
 .photoCursorLayer {
   position: fixed;
   inset: 0;
@@ -13,7 +11,6 @@
   opacity: 1;
 }
 
-/* Holofote / bloom — luz suave na zona de foto */
 .photoCursorBloom {
   position: fixed;
   left: var(--pc-x);
@@ -24,16 +21,15 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(74, 222, 128, calc(0.55 * var(--pc-intensity))) 0%,
-    rgba(34, 197, 94, calc(0.22 * var(--pc-intensity))) 35%,
-    rgba(34, 197, 94, calc(0.06 * var(--pc-intensity))) 55%,
-    transparent 72%
+    rgba(74, 222, 128, calc(0.5 * var(--pc-intensity))) 0%,
+    rgba(34, 197, 94, calc(0.18 * var(--pc-intensity))) 40%,
+    transparent 70%
   );
-  filter: blur(calc(6px + var(--pc-intensity) * 4px));
+  filter: blur(8px);
   mix-blend-mode: screen;
+  pointer-events: none;
 }
 
-/* Anel translúcido */
 .photoCursorRing {
   position: fixed;
   left: var(--pc-x);
@@ -44,12 +40,11 @@
   border-radius: 50%;
   border: 1.5px solid rgba(74, 222, 128, 0.55);
   background: transparent;
-  box-shadow:
-    0 0 0 1px rgba(74, 222, 128, 0.12),
-    0 0 24px rgba(74, 222, 128, calc(0.35 * var(--pc-intensity)));
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.35);
+  pointer-events: none;
+  will-change: left, top;
 }
 
-/* Ponto central sólido */
 .photoCursorDot {
   position: fixed;
   left: var(--pc-x);
@@ -61,19 +56,29 @@
   background: #4ade80;
   box-shadow:
     0 0 10px rgba(74, 222, 128, 0.95),
-    0 0 22px rgba(74, 222, 128, 0.55),
-    0 0 40px rgba(34, 197, 94, 0.25);
+    0 0 22px rgba(74, 222, 128, 0.55);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.photo-cursor-hide-native,
+body.photo-cursor-hide-native * {
+  cursor: none !important;
 }
 
 html[data-photo-cursor='1'] .photo-zone,
 html[data-photo-cursor='1'] [data-photo-zone],
-html[data-photo-cursor='1'] .landRoot,
-html[data-photo-cursor-site='1'] body {
+html[data-photo-cursor='1'] .landRoot {
   cursor: none;
 }
 
 @media (pointer: coarse) {
   .photoCursorLayer {
     display: none;
+  }
+
+  body.photo-cursor-hide-native,
+  body.photo-cursor-hide-native * {
+    cursor: auto !important;
   }
 }

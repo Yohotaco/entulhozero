@@ -21,6 +21,7 @@ const CATEGORIES: Array<{ id: MaterialCategory | 'all'; label: string }> = [
 ]
 
 export function BrowsePage() {
+  const { settings } = useSettings()
   const [category, setCategory] = useState<MaterialCategory | 'all'>('all')
   const [query, setQuery] = useState('')
   const [city, setCity] = useState('')
@@ -31,7 +32,7 @@ export function BrowsePage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return listings.filter((l) => {
-      if (l.status === 'expired') return false
+      if (settings.hideExpiredInBrowse && l.status === 'expired') return false
       if (category !== 'all' && l.category !== category) return false
       if (city.trim() && l.city.toLowerCase() !== city.trim().toLowerCase()) return false
       if (!q) return true
@@ -101,6 +102,9 @@ export function BrowsePage() {
 function ListingCard({ listing }: { listing: Listing }) {
   const { settings } = useSettings()
   const thumb = listing.imageUrl || getCategoryImage(listing.category)
+  const locationLabel = settings.showNeighborhoodOnly
+    ? listing.neighborhood
+    : `${listing.neighborhood}, ${listing.city}`
 
   return (
     <Link to={`/anuncio/${listing.id}`} className="card listingCard">
@@ -120,7 +124,7 @@ function ListingCard({ listing }: { listing: Listing }) {
           <span className="muted">Qtd</span> {listing.quantity} {listing.unit}
         </div>
         <div>
-          <span className="muted">Local</span> {listing.neighborhood}, {listing.city}
+          <span className="muted">Local</span> {locationLabel}
         </div>
       </div>
     </Link>

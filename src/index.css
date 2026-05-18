@@ -568,3 +568,45 @@ textarea {
   flex-wrap: wrap;
   margin-top: 8px;
 }
+
+html {
+  font-size: calc(16px * var(--font-scale, 1));
+}
+
+html[data-theme='dark'] {
+  color: #e2e8f0;
+  background: radial-gradient(1000px 600px at 20% 0%, rgba(34, 197, 94, 0.12) 0%, transparent 60%),
+    radial-gradient(900px 600px at 90% 10%, rgba(6, 182, 212, 0.1) 0%, transparent 55%), #0b1220;
+}
+
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .nav:not(.nav--dark) {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+html[data-high-contrast='1'] {
+  --accent-h: 142;
+}
+
+html[data-high-contrast='1'] .btn,
+html[data-high-contrast='1'] .card {
+  border-width: 2px;
+}
+
+html[data-reduce-motion='1'] *,
+html[data-reduce-motion='1'] *::before,
+html[data-reduce-motion='1'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+html[data-large-touch='1'] .btn,
+html[data-large-touch='1'] .input,
+html[data-large-touch='1'] select {
+  min-height: calc(44px * var(--touch-scale, 1));
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

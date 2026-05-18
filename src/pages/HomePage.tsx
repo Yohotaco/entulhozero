@@ -6,20 +6,23 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion'
-import { useRef, type ReactNode } from 'react'
+import { useMemo, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { SafeImage } from '../components/SafeImage'
-import { HOME_GALLERY_IMAGES } from '../data/homeGallery'
+import { getHomeGalleryImages } from '../data/homeGallery'
+import { useSettings } from '../settings/SettingsContext'
 import './HomeLanding.css'
 
 function MarqueeRow({
   images,
   reverse,
   durationSec,
+  lazyLoad,
 }: {
   images: string[]
   reverse?: boolean
   durationSec: number
+  lazyLoad?: boolean
 }) {
   const loop = [...images, ...images]
   return (
@@ -30,7 +33,14 @@ function MarqueeRow({
       >
         {loop.map((src, i) => (
           <figure key={`${src}-${i}`} className="landMarqueeFig">
-            <SafeImage src={src} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed={`marquee-${i}`} />
+            <SafeImage
+              src={src}
+              alt=""
+              loading={lazyLoad === false ? 'eager' : 'lazy'}
+              decoding="async"
+              draggable={false}
+              fallbackSeed={`marquee-${i}`}
+            />
           </figure>
         ))}
       </div>
@@ -58,14 +68,16 @@ function ParallaxBand({
   eyebrow,
   title,
   children,
+  parallaxOff,
 }: {
   image: string
   eyebrow: string
   title: string
   children: ReactNode
+  parallaxOff?: boolean
 }) {
   const ref = useRef<HTMLElement | null>(null)
-  const reduceMotion = useReducedMotion() === true
+  const reduceMotion = parallaxOff || useReducedMotion() === true
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
@@ -183,7 +195,13 @@ function AuroraField() {
 }
 
 export function HomePage() {
-  const imgs = HOME_GALLERY_IMAGES
+  const { settings } = useSettings()
+  const motionOff = settings.reduceMotion || settings.homeReducedEffects
+  const parallaxOff = !settings.homeParallaxEnabled || motionOff
+  const imgs = useMemo(
+    () => getHomeGalleryImages(settings.galleryUseRemoteImages),
+    [settings.galleryUseRemoteImages],
+  )
   const even = imgs.filter((_, i) => i % 2 === 0)
   const odd = imgs.filter((_, i) => i % 2 === 1)
   const floatImgs = imgs.slice(0, 6)
@@ -222,8 +240,8 @@ export function HomePage() {
         <div className="landHeroContent">
           <motion.div
             className="landBadge"
-            animate={{ y: [0, -4, 0] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={motionOff ? undefined : { y: [0, -4, 0] }}
+            transition={motionOff ? undefined : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
           >
             <span className="landBadgeDot" />
             MVP escolar · economia circular · zero backend
@@ -232,8 +250,8 @@ export function HomePage() {
           <motion.h1
             className="landHeroTitle landDisplay"
             initial={false}
-            animate={{ scale: [1, 1.012, 1] }}
-            transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+            animate={motionOff ? undefined : { scale: [1, 1.012, 1] }}
+            transition={motionOff ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut' }}
           >
             Sobrou <span>telha</span>, tijolo, madeira, tinta?
             <br />
@@ -242,8 +260,8 @@ export function HomePage() {
 
           <motion.p
             className="landHeroSub"
-            animate={{ opacity: [0.72, 1, 0.72] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+            animate={motionOff ? undefined : { opacity: [0.72, 1, 0.72] }}
+            transition={motionOff ? undefined : { duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
           >
             O EntulhoZero é um protótipo que mostra como conectar <strong>sobras de obra</strong> com quem quer reaproveitar: você publica com prazo, recebe interesse no chat e combina retirada.
             Sem “IA mágica” decidindo nada — é <strong>gente falando com gente</strong>, do jeito que funciona no mundo real.
@@ -265,8 +283,8 @@ export function HomePage() {
           <motion.div
             className="landHeroDeck"
             initial={false}
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+            animate={motionOff ? undefined : { y: [0, -6, 0] }}
+            transition={motionOff ? undefined : { duration: 7, repeat: Infinity, ease: 'easeInOut' }}
           >
             <div className="landHeroDeckCard">
               <span className="landHeroDeckK">Local</span>
@@ -287,11 +305,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="landMarqueeBlock" aria-hidden>
-        <MarqueeRow images={even.length ? even : imgs} durationSec={48} />
-        <MarqueeRow images={odd.length ? odd : imgs} reverse durationSec={62} />
-        <MarqueeRow images={[...imgs].reverse()} durationSec={70} />
-      </div>
+      {settings.homeMarqueeEnabled ? (
+        <div className="landMarqueeBlock" aria-hidden>
+          <MarqueeRow images={even.length ? even : imgs} durationSec={48} lazyLoad={settings.galleryLazyLoad} />
+          <MarqueeRow images={odd.length ? odd : imgs} reverse durationSec={62} lazyLoad={settings.galleryLazyLoad} />
+          <MarqueeRow images={[...imgs].reverse()} durationSec={70} lazyLoad={settings.galleryLazyLoad} />
+        </div>
+      ) : null}
 
       <section className="landEditorial">
         <div className="landEditorialInner">
@@ -370,6 +390,7 @@ export function HomePage() {
         image={parallaxImg}
         eyebrow="Camada cinematográfica"
         title="Parallax com mola: a imagem “respira” enquanto você rola."
+        parallaxOff={parallaxOff}
       >
         <p>
           Esse bloco é de propósito dramático: a foto fica semi‑transparente, se move devagar, e o texto em vidro continua legível. É o tipo de coisa que parece “caro”, mas é só

@@ -36,6 +36,24 @@ export function getPlaceholderImage(seed = 'placeholder'): string {
 
 export const HOME_GALLERY_IMAGES: string[] = GALLERY_SEEDS.map((s) => getGalleryImageUrl(s, 800, 600))
 
+function hashSeed(seed: string): number {
+  let h = 0
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0
+  return Math.abs(h)
+}
+
+/** Placeholder local (sem rede) quando galeria remota está desligada. */
+export function getLocalGalleryPlaceholder(seed: string, w = 800, h = 600): string {
+  const hue = hashSeed(seed) % 360
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="hsl(${hue} 45% 28%)"/><stop offset="100%" stop-color="hsl(${(hue + 40) % 360} 35% 18%)"/></linearGradient></defs><rect fill="url(#g)" width="100%" height="100%"/><text x="50%" y="52%" fill="rgba(255,255,255,0.35)" font-family="system-ui" font-size="14" text-anchor="middle">${seed.slice(0, 12)}</text></svg>`
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
+}
+
+export function getHomeGalleryImages(useRemote: boolean): string[] {
+  if (useRemote) return HOME_GALLERY_IMAGES
+  return GALLERY_SEEDS.map((s) => getLocalGalleryPlaceholder(s, 800, 600))
+}
+
 /** Categoria → seed visual para cards de anúncio sem foto */
 export const CATEGORY_IMAGE_SEEDS: Record<string, string> = {
   telha: 'cat-telha',

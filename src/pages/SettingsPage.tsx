@@ -1,5 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useI18n } from '../i18n/I18nContext'
+import { LOCALE_CODES, LOCALE_LABELS, type LocaleCode } from '../i18n/locales'
 import { seedIfEmpty } from '../lib/db'
 import { DEFAULT_SETTINGS } from '../settings/defaults'
 import { useSettings } from '../settings/SettingsContext'
@@ -103,12 +105,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export function SettingsPage() {
-  const { settings, setSetting, patchSettings, resetSettings } = useSettings()
+  const { settings, setSetting, patchSettings, resetSettings, saveNow, lastSavedAt } = useSettings()
+  const { t } = useI18n()
 
   const accentPreview = useMemo(
     () => `hsl(${settings.accentHue} 72% 42%)`,
     [settings.accentHue],
   )
+
+  const savedLabel = lastSavedAt
+    ? `${t('settingsSaved')} · ${new Date(lastSavedAt).toLocaleTimeString()}`
+    : t('settingsSaved')
 
   return (
     <SettingsPageBody
@@ -116,6 +123,9 @@ export function SettingsPage() {
       setSetting={setSetting}
       patchSettings={patchSettings}
       resetSettings={resetSettings}
+      saveNow={saveNow}
+      savedLabel={savedLabel}
+      t={t}
       accentPreview={accentPreview}
     />
   )
@@ -126,50 +136,96 @@ function SettingsPageBody({
   setSetting,
   patchSettings,
   resetSettings,
+  saveNow,
+  savedLabel,
+  t,
   accentPreview,
 }: {
   settings: AppSettings
   setSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void
   patchSettings: (p: Partial<AppSettings>) => void
   resetSettings: () => void
+  saveNow: () => void
+  savedLabel: string
+  t: (key: import('../i18n/locales').TranslationKeys) => string
   accentPreview: string
 }) {
+  const importRef = useRef<HTMLInputElement>(null)
+
   return (
     <div className="stack settingsPage">
-      <div className="pageHeader">
+      <div className="pageHeader settingsPageHeader">
         <div>
-          <h1>Configurações</h1>
-          <p className="muted">Tudo que dá pra ajustar no EntulhoZero — salvo no seu navegador.</p>
+          <h1>{t('settingsTitle')}</h1>
+          <p className="muted">{t('settingsSubtitle')}</p>
+          <p className="settingsSavedBadge">{savedLabel}</p>
         </div>
-        <Link className="btnSecondary" to="/">
-          ← Início
-        </Link>
+        <div className="settingsHeaderActions">
+          <Link className="btn settingsBackLanding" to="/">
+            {t('settingsBackLanding')}
+          </Link>
+          <button type="button" className="btnSecondary" onClick={saveNow}>
+            {t('settingsSaveNow')}
+          </button>
+          <button type="button" className="btnSecondary" onClick={() => importRef.current?.click()}>
+            {t('settingsImport')}
+          </button>
+          <input
+            ref={importRef}
+            type="file"
+            accept="application/json"
+            hidden
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              const reader = new FileReader()
+              reader.onload = () => {
+                try {
+                  patchSettings({ ...DEFAULT_SETTINGS, ...(JSON.parse(String(reader.result)) as Partial<AppSettings>) })
+                } catch {
+                  window.alert('JSON inválido')
+                }
+                e.target.value = ''
+              }
+              reader.readAsText(file)
+            }}
+          />
+        </div>
       </div>
 
-      <Section title="Aparência">
+      <Section title={t('settingsLanguage')}>
+        <SelectRow<LocaleCode>
+          label={t('settingsLanguage')}
+          value={settings.language}
+          options={LOCALE_CODES.map((code) => ({ value: code, label: LOCALE_LABELS[code] }))}
+          onChange={(v) => setSetting('language', v)}
+        />
+      </Section>
+
+      <Section title={t('secAppearance')}>
         <SelectRow<ThemeMode>
-          label="Tema"
+          label={t('theme')}
           value={settings.theme}
           options={[
-            { value: 'light', label: 'Claro' },
-            { value: 'dark', label: 'Escuro' },
-            { value: 'system', label: 'Sistema' },
+            { value: 'light', label: t('themeLight') },
+            { value: 'dark', label: t('themeDark') },
+            { value: 'system', label: t('themeSystem') },
           ]}
           onChange={(v) => setSetting('theme', v)}
         />
         <SelectRow<FontScale>
-          label="Tamanho da fonte"
+          label={t('fontSize')}
           value={settings.fontScale}
           options={[
-            { value: 'sm', label: 'Pequeno' },
-            { value: 'md', label: 'Normal' },
-            { value: 'lg', label: 'Grande' },
+            { value: 'sm', label: t('fontSm') },
+            { value: 'md', label: t('fontMd') },
+            { value: 'lg', label: t('fontLg') },
           ]}
           onChange={(v) => setSetting('fontScale', v)}
         />
         <RangeRow
-          label="Cor de destaque (matiz)"
-          hint="Verde padrão ≈ 142"
+          label={t('accentHue')}
+          hint="142"
           min={80}
           max={200}
           step={1}
@@ -178,30 +234,24 @@ function SettingsPageBody({
           format={(v) => `${v}°`}
         />
         <div className="settingsSwatch" style={{ background: accentPreview }} />
-        <Toggle label="Reduzir movimento" checked={settings.reduceMotion} onChange={(v) => setSetting('reduceMotion', v)} />
-        <Toggle label="Alto contraste" checked={settings.highContrast} onChange={(v) => setSetting('highContrast', v)} />
-        <Toggle
-          label="Alvos de toque maiores"
-          checked={settings.largeTouchTargets}
-          onChange={(v) => setSetting('largeTouchTargets', v)}
-        />
+        <Toggle label={t('reduceMotion')} checked={settings.reduceMotion} onChange={(v) => setSetting('reduceMotion', v)} />
+        <Toggle label={t('highContrast')} checked={settings.highContrast} onChange={(v) => setSetting('highContrast', v)} />
+        <Toggle label={t('largeTouch')} checked={settings.largeTouchTargets} onChange={(v) => setSetting('largeTouchTargets', v)} />
       </Section>
 
-      <Section title="Cursor (estilo ConfirmAí)">
+      <Section title={t('secCursor')}>
         <Toggle
-          label="Ativar cursor especial"
-          hint="Ponto verde + anel + luz — igual ao da referência"
+          label={t('cursorEnable')}
           checked={settings.photoCursorEnabled}
           onChange={(v) => setSetting('photoCursorEnabled', v)}
         />
         <Toggle
-          label="Só em zonas de foto"
-          hint="Criar anúncio, preview, etc."
+          label={t('cursorZonesOnly')}
           checked={settings.photoCursorOnlyInZones}
           onChange={(v) => setSetting('photoCursorOnlyInZones', v)}
         />
         <RangeRow
-          label="Tamanho do ponto central"
+          label={t('cursorDotSize')}
           min={4}
           max={14}
           step={1}
@@ -210,7 +260,7 @@ function SettingsPageBody({
           format={(v) => `${v}px`}
         />
         <RangeRow
-          label="Tamanho do anel"
+          label={t('cursorRingSize')}
           min={16}
           max={48}
           step={1}
@@ -219,7 +269,17 @@ function SettingsPageBody({
           format={(v) => `${v}px`}
         />
         <RangeRow
-          label="Raio da luz"
+          label={t('cursorRingDelay')}
+          hint="Menor = anel mais lento"
+          min={0.04}
+          max={0.45}
+          step={0.01}
+          value={settings.photoCursorRingLag}
+          onChange={(v) => setSetting('photoCursorRingLag', v)}
+          format={(v) => `${Math.round(v * 100)}%`}
+        />
+        <RangeRow
+          label={t('cursorLightRadius')}
           min={60}
           max={280}
           step={5}
@@ -228,7 +288,7 @@ function SettingsPageBody({
           format={(v) => `${v}px`}
         />
         <RangeRow
-          label="Intensidade da luz"
+          label={t('cursorLightIntensity')}
           min={0.1}
           max={1}
           step={0.05}
@@ -237,11 +297,11 @@ function SettingsPageBody({
           format={(v) => `${Math.round(v * 100)}%`}
         />
         <div className="photo-zone settingsCursorDemo" data-photo-zone>
-          <p className="muted">Área de teste — passe o mouse aqui (desktop).</p>
+          <p className="muted">{t('cursorDemo')}</p>
         </div>
       </Section>
 
-      <Section title="Fotos e galeria">
+      <Section title={t('secPhotos')}>
         <RangeRow
           label="Qualidade JPEG ao enviar"
           min={0.5}
@@ -264,23 +324,14 @@ function SettingsPageBody({
           checked={settings.photoShowUploadGrid}
           onChange={(v) => setSetting('photoShowUploadGrid', v)}
         />
-        <Toggle
-          label="Imagens remotas na home"
-          hint="Desligado = só placeholders locais via picsum"
-          checked={settings.galleryUseRemoteImages}
-          onChange={(v) => setSetting('galleryUseRemoteImages', v)}
-        />
-        <Toggle label="Lazy load na galeria" checked={settings.galleryLazyLoad} onChange={(v) => setSetting('galleryLazyLoad', v)} />
-        <Toggle
-          label="Miniaturas nos anúncios"
-          checked={settings.listingShowThumbnails}
-          onChange={(v) => setSetting('listingShowThumbnails', v)}
-        />
+        <Toggle label={t('galleryRemote')} checked={settings.galleryUseRemoteImages} onChange={(v) => setSetting('galleryUseRemoteImages', v)} />
+        <Toggle label={t('galleryLazy')} checked={settings.galleryLazyLoad} onChange={(v) => setSetting('galleryLazyLoad', v)} />
+        <Toggle label={t('listingThumbs')} checked={settings.listingShowThumbnails} onChange={(v) => setSetting('listingShowThumbnails', v)} />
       </Section>
 
-      <Section title="Anúncios (padrões)">
+      <Section title={t('secListings')}>
         <label className="settingsRow">
-          <span className="settingsLabel">Cidade padrão</span>
+          <span className="settingsLabel">{t('defaultCity')}</span>
           <input
             className="input"
             value={settings.defaultCity}
@@ -288,7 +339,7 @@ function SettingsPageBody({
           />
         </label>
         <RangeRow
-          label="Prazo padrão (dias)"
+          label={t('defaultDays')}
           min={1}
           max={30}
           step={1}
@@ -296,26 +347,18 @@ function SettingsPageBody({
           onChange={(v) => setSetting('defaultListingDays', v)}
         />
         <label className="settingsRow">
-          <span className="settingsLabel">Categoria padrão</span>
+          <span className="settingsLabel">{t('defaultCategory')}</span>
           <input
             className="input"
             value={settings.defaultCategory}
             onChange={(e) => setSetting('defaultCategory', e.target.value)}
           />
         </label>
-        <Toggle
-          label="Ocultar expirados em Explorar"
-          checked={settings.hideExpiredInBrowse}
-          onChange={(v) => setSetting('hideExpiredInBrowse', v)}
-        />
-        <Toggle
-          label="Mostrar só bairro (privacidade)"
-          checked={settings.showNeighborhoodOnly}
-          onChange={(v) => setSetting('showNeighborhoodOnly', v)}
-        />
+        <Toggle label={t('hideExpired')} checked={settings.hideExpiredInBrowse} onChange={(v) => setSetting('hideExpiredInBrowse', v)} />
+        <Toggle label={t('neighborhoodOnly')} checked={settings.showNeighborhoodOnly} onChange={(v) => setSetting('showNeighborhoodOnly', v)} />
       </Section>
 
-      <Section title="Chat">
+      <Section title={t('secChat')}>
         <Toggle label="Enter envia mensagem" checked={settings.chatEnterToSend} onChange={(v) => setSetting('chatEnterToSend', v)} />
         <Toggle label="Som ao receber (simulado)" checked={settings.chatSoundEnabled} onChange={(v) => setSetting('chatSoundEnabled', v)} />
         <SelectRow<TimestampFormat>
@@ -330,14 +373,10 @@ function SettingsPageBody({
         <Toggle label="Mostrar avatares no chat" checked={settings.chatShowAvatars} onChange={(v) => setSetting('chatShowAvatars', v)} />
       </Section>
 
-      <Section title="Página inicial">
-        <Toggle label="Marquee de fotos" checked={settings.homeMarqueeEnabled} onChange={(v) => setSetting('homeMarqueeEnabled', v)} />
-        <Toggle label="Parallax nas faixas" checked={settings.homeParallaxEnabled} onChange={(v) => setSetting('homeParallaxEnabled', v)} />
-        <Toggle
-          label="Efeitos reduzidos na home"
-          checked={settings.homeReducedEffects}
-          onChange={(v) => setSetting('homeReducedEffects', v)}
-        />
+      <Section title={t('secHome')}>
+        <Toggle label={t('homeMarquee')} checked={settings.homeMarqueeEnabled} onChange={(v) => setSetting('homeMarqueeEnabled', v)} />
+        <Toggle label={t('homeParallax')} checked={settings.homeParallaxEnabled} onChange={(v) => setSetting('homeParallaxEnabled', v)} />
+        <Toggle label={t('homeReduced')} checked={settings.homeReducedEffects} onChange={(v) => setSetting('homeReducedEffects', v)} />
       </Section>
 
       <Section title="Notificações (MVP)">
@@ -369,7 +408,7 @@ function SettingsPageBody({
               window.alert('Dados de demo recarregados (se estavam vazios).')
             }}
           >
-            Recarregar demo
+            {t('reloadDemo')}
           </button>
           <button
             type="button"
@@ -382,17 +421,17 @@ function SettingsPageBody({
               a.click()
             }}
           >
-            Exportar configurações
+            {t('exportSettings')}
           </button>
           <button
             type="button"
             className="btnSecondary"
             onClick={() => {
-              if (!window.confirm('Restaurar todas as configurações para o padrão?')) return
+              if (!window.confirm(t('restoreConfirm'))) return
               resetSettings()
             }}
           >
-            Restaurar padrões
+            {t('resetDefaults')}
           </button>
           <button
             type="button"

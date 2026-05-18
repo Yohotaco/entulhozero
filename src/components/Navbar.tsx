@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { useI18n } from '../i18n/I18nContext'
 import { getOrCreateCurrentUser, seedIfEmpty, setCurrentUserName } from '../lib/db'
+import { useSettings } from '../settings/SettingsContext'
 
 export function Navbar() {
+  const { t } = useI18n()
+  const { settings } = useSettings()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const isHome = pathname === '/'
@@ -13,31 +17,31 @@ export function Navbar() {
     seedIfEmpty()
   }, [])
 
-  const displayName = useMemo(() => name.trim() || 'Visitante', [name])
+  const displayName = useMemo(() => name.trim() || t('visitor'), [name, t])
 
   return (
     <header className={isHome ? 'nav nav--dark' : 'nav'}>
       <div className="container navInner">
         <Link className="brand" to="/">
           EntulhoZero
-          <span className="brandTag">Sobras de obra perto de você</span>
+          <span className="brandTag">{t('brandTag')}</span>
         </Link>
 
         <nav className="navLinks">
           <NavLink to="/explorar" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            Explorar
+            {t('navExplore')}
           </NavLink>
           <NavLink to="/novo" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            Criar anúncio
+            {t('navNew')}
           </NavLink>
           <NavLink to="/inbox" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            Inbox
+            {t('navInbox')}
           </NavLink>
           <NavLink to="/sobre" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            Sobre
+            {t('navAbout')}
           </NavLink>
           <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            Config
+            {t('navSettings')}
           </NavLink>
         </nav>
 
@@ -46,9 +50,9 @@ export function Navbar() {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                const next = name.trim() || 'Visitante'
+                const next = name.trim() || t('visitor')
                 setName(next)
-                setCurrentUserName(next)
+                if (settings.persistNameInBrowser) setCurrentUserName(next)
                 setEditingName(false)
               }}
               className="nameForm"
@@ -57,11 +61,11 @@ export function Navbar() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="input"
-                placeholder="Seu nome"
+                placeholder={t('yourName')}
                 autoFocus
               />
               <button className="btn" type="submit">
-                OK
+                {t('ok')}
               </button>
             </form>
           ) : (
@@ -75,7 +79,7 @@ export function Navbar() {
                   navigate('/novo')
                 }}
               >
-                + anúncio
+                {t('navAd')}
               </button>
             </>
           )}

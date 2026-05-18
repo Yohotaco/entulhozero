@@ -1,6 +1,7 @@
 import type { AppSettings } from './types'
 
 export const DEFAULT_SETTINGS: AppSettings = {
+  language: 'pt',
   theme: 'system',
   accentHue: 142,
   fontScale: 'md',
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   photoCursorLightRadius: 140,
   photoCursorLightIntensity: 0.55,
   photoCursorOnlyInZones: true,
+  photoCursorRingLag: 0.12,
 
   photoCompressQuality: 0.82,
   photoMaxWidthPx: 1280,
@@ -46,4 +48,4 @@ export const DEFAULT_SETTINGS: AppSettings = {
   devShowDbEvents: false,
 }
 
-export const SETTINGS_STORAGE_KEY = 'entulhozero:settings:v1'
+export const SETTINGS_STORAGE_KEY = 'entulhozero:settings:v2'

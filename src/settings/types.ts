@@ -1,8 +1,11 @@
+import type { LocaleCode } from '../i18n/locales'
+
 export type ThemeMode = 'light' | 'dark' | 'system'
 export type FontScale = 'sm' | 'md' | 'lg'
 export type TimestampFormat = '12h' | '24h'
 
 export type AppSettings = {
+  language: LocaleCode
   // Aparência
   theme: ThemeMode
   accentHue: number
@@ -18,6 +21,7 @@ export type AppSettings = {
   photoCursorLightRadius: number
   photoCursorLightIntensity: number
   photoCursorOnlyInZones: boolean
+  photoCursorRingLag: number // 0–1, menor = anel mais atrasado
 
   // Fotos / mídia
   photoCompressQuality: number
