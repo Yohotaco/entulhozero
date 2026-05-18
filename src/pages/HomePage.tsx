@@ -394,7 +394,7 @@ export function HomePage() {
           <div className="landBandGrid">
             {bandImgs.map((src, i) => (
               <div key={src + i} className="landBandShot">
-                <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+                <SafeImage src={src} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed={`band-${i}`} />
               </div>
             ))}
           </div>

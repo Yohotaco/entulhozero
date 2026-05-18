@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { PhotoUploadZone } from '../components/PhotoUploadZone'
 import { createListing, getOrCreateCurrentUser } from '../lib/db'
+import { useSettings } from '../settings/SettingsContext'
 import type { MaterialCategory, Unit } from '../types'
 
 const CATEGORIES: Array<{ id: MaterialCategory; label: string }> = [
@@ -20,15 +22,19 @@ const UNITS: Unit[] = ['un', 'kg', 'm²', 'm³']
 export function NewListingPage() {
   const navigate = useNavigate()
   const user = useMemo(() => getOrCreateCurrentUser(), [])
+  const { settings } = useSettings()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory] = useState<MaterialCategory>('telha')
+  const [category, setCategory] = useState<MaterialCategory>(
+    (settings.defaultCategory as MaterialCategory) || 'telha',
+  )
   const [quantity, setQuantity] = useState(1)
   const [unit, setUnit] = useState<Unit>('un')
   const [neighborhood, setNeighborhood] = useState('')
-  const [city, setCity] = useState('Vitória')
-  const [days, setDays] = useState(3)
+  const [city, setCity] = useState(settings.defaultCity || 'Vitória')
+  const [days, setDays] = useState(settings.defaultListingDays || 3)
+  const [photo, setPhoto] = useState<string | null>(null)
 
   const expiresAt = useMemo(() => Date.now() + days * 24 * 60 * 60 * 1000, [days])
 
@@ -55,6 +61,7 @@ export function NewListingPage() {
             city: city.trim() || '—',
             expiresAt,
             ownerId: user.id,
+            imageUrl: photo ?? undefined,
           })
           navigate(`/anuncio/${listing.id}`)
         }}
@@ -122,6 +129,8 @@ export function NewListingPage() {
             <span className="help muted">Expira automaticamente</span>
           </label>
         </div>
+
+        <PhotoUploadZone value={photo} onChange={setPhoto} />
 
         <label className="field">
           <span className="label">Descrição</span>

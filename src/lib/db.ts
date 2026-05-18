@@ -119,6 +119,7 @@ export function createListing(input: {
   city: string
   expiresAt: number
   ownerId: string
+  imageUrl?: string
 }): Listing {
   const state = getState()
   const listing: Listing = {
@@ -134,6 +135,7 @@ export function createListing(input: {
     status: 'open',
     createdAt: now(),
     ownerId: input.ownerId,
+    imageUrl: input.imageUrl,
   }
   state.listings[listing.id] = listing
   setState(state)

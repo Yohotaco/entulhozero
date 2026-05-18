@@ -61,7 +61,12 @@ export function PhotoUploadZone({ value, onChange, label = 'Foto do material' }:
       </p>
 
       {value ? (
-        <motionLayerPreview value={value} showGrid={settings.photoShowUploadGrid} onClear={() => onChange(null)} />
+        <div className={`photoUploadPreview${settings.photoShowUploadGrid ? ' photoUploadPreview--grid' : ''}`}>
+          <SafeImage src={value} alt="Preview" className="photoUploadImg" fallbackSeed="upload-preview" />
+          <button type="button" className="photoUploadClear" onClick={() => onChange(null)} aria-label="Remover foto">
+            ×
+          </button>
+        </div>
       ) : (
         <button type="button" className="photoUploadDrop" onClick={() => inputRef.current?.click()} disabled={busy}>
           <span className="photoUploadDropIcon" aria-hidden>
@@ -93,25 +98,6 @@ export function PhotoUploadZone({ value, onChange, label = 'Foto do material' }:
           </button>
         ) : null}
       </div>
-    </div>
-  )
-}
-
-function motionLayerPreview({
-  value,
-  showGrid,
-  onClear,
-}: {
-  value: string
-  showGrid: boolean
-  onClear: () => void
-}) {
-  return (
-    <div className={`photoUploadPreview${showGrid ? ' photoUploadPreview--grid' : ''}`}>
-      <SafeImage src={value} alt="Preview" className="photoUploadImg" fallbackSeed="upload-preview" />
-      <button type="button" className="photoUploadClear" onClick={onClear} aria-label="Remover foto">
-        ×
-      </button>
     </div>
   )
 }

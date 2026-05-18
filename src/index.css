@@ -342,6 +342,20 @@ textarea {
   gap: 14px;
 }
 
+.listingCardThumb {
+  height: 140px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #e2e8f0;
+}
+
+.listingCardThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .listingCard {
   transition: transform 0.08s ease, box-shadow 0.08s ease;
 }

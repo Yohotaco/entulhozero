@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { SafeImage } from '../components/SafeImage'
+import { getCategoryImage } from '../data/homeGallery'
 import { listListings } from '../lib/db'
 import { useDbTick } from '../hooks/useDbTick'
+import { useSettings } from '../settings/SettingsContext'
 import type { MaterialCategory, Listing } from '../types'
 
 const CATEGORIES: Array<{ id: MaterialCategory | 'all'; label: string }> = [
@@ -96,8 +99,16 @@ export function BrowsePage() {
 }
 
 function ListingCard({ listing }: { listing: Listing }) {
+  const { settings } = useSettings()
+  const thumb = listing.imageUrl || getCategoryImage(listing.category)
+
   return (
     <Link to={`/anuncio/${listing.id}`} className="card listingCard">
+      {settings.listingShowThumbnails ? (
+        <div className="listingCardThumb photo-zone" data-photo-zone>
+          <SafeImage src={thumb} alt="" fallbackSeed={listing.category} />
+        </div>
+      ) : null}
       <div className="listingTop">
         <div className="pill">{listing.category.toUpperCase()}</div>
         <div className="muted">{timeLeft(listing.expiresAt)}</div>

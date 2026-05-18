@@ -32,6 +32,7 @@ export type Listing = {
   status: ListingStatus
   createdAt: number
   ownerId: string
+  imageUrl?: string
 }
 
 export type Conversation = {
