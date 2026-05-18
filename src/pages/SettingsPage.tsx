@@ -22,14 +22,10 @@ function Toggle({
       <div>
         <span className="settingsLabel">{label}</span>
         {hint ? <span className="settingsHint muted">{hint}</span> : null}
-      </motionLayer>
+      </div>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
     </label>
   )
-}
-
-function motionLayer({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
 }
 
 function RangeRow({
@@ -53,7 +49,13 @@ function RangeRow({
 }) {
   return (
     <label className="settingsRow settingsRow--stack">
-      <motionLayerRangeHeader label={label} hint={hint} value={value} format={format} />
+      <div className="settingsRangeHead">
+        <div>
+          <span className="settingsLabel">{label}</span>
+          {hint ? <span className="settingsHint muted">{hint}</span> : null}
+        </div>
+        <span className="settingsValue">{format ? format(value) : value}</span>
+      </div>
       <input
         type="range"
         min={min}
@@ -63,28 +65,6 @@ function RangeRow({
         onChange={(e) => onChange(Number(e.target.value))}
       />
     </label>
-  )
-}
-
-function motionLayerRangeHeader({
-  label,
-  hint,
-  value,
-  format,
-}: {
-  label: string
-  hint?: string
-  value: number
-  format?: (v: number) => string
-}) {
-  return (
-    <div className="settingsRangeHead">
-      <div>
-        <span className="settingsLabel">{label}</span>
-        {hint ? <span className="settingsHint muted">{hint}</span> : null}
-      </div>
-      <span className="settingsValue">{format ? format(value) : value}</span>
-    </div>
   )
 }
 
@@ -154,7 +134,7 @@ function motionLayerSettingsPage({
         <div>
           <h1>Configurações</h1>
           <p className="muted">Tudo que dá pra ajustar no EntulhoZero — salvo no seu navegador.</p>
-        </motionLayer>
+        </div>
         <Link className="btnSecondary" to="/">
           ← Início
         </Link>
@@ -201,10 +181,10 @@ function motionLayerSettingsPage({
         />
       </Section>
 
-      <Section title="Cursor de foto (esfera + luz)">
+      <Section title="Cursor (estilo ConfirmAí)">
         <Toggle
           label="Ativar cursor especial"
-          hint="Esfera verde + holofote ao passar em zonas de foto"
+          hint="Ponto verde + anel + luz — igual ao da referência"
           checked={settings.photoCursorEnabled}
           onChange={(v) => setSetting('photoCursorEnabled', v)}
         />
@@ -215,12 +195,21 @@ function motionLayerSettingsPage({
           onChange={(v) => setSetting('photoCursorOnlyInZones', v)}
         />
         <RangeRow
-          label="Tamanho da esfera"
-          min={10}
-          max={36}
+          label="Tamanho do ponto central"
+          min={4}
+          max={14}
           step={1}
           value={settings.photoCursorSphereSize}
           onChange={(v) => setSetting('photoCursorSphereSize', v)}
+          format={(v) => `${v}px`}
+        />
+        <RangeRow
+          label="Tamanho do anel"
+          min={16}
+          max={48}
+          step={1}
+          value={settings.photoCursorRingSize}
+          onChange={(v) => setSetting('photoCursorRingSize', v)}
           format={(v) => `${v}px`}
         />
         <RangeRow

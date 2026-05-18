@@ -1,0 +1,73 @@
+.settingsPage .settingsSection {
+  margin-bottom: 0;
+}
+
+.settingsSectionTitle {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+}
+
+.settingsSectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.settingsRow--stack {
+  flex-direction: column;
+  align-items: stretch;
+  cursor: default;
+}
+
+.settingsLabel {
+  font-weight: 600;
+  display: block;
+}
+
+.settingsHint {
+  display: block;
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.settingsValue {
+  font-weight: 700;
+  color: hsl(var(--accent-h, 142) 55% 38%);
+  font-variant-numeric: tabular-nums;
+}
+
+.settingsRangeHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.settingsSwatch {
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.settingsCursorDemo {
+  min-height: 100px;
+  border-radius: 12px;
+  background: #030712;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.settingsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

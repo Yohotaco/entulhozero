@@ -6,6 +6,7 @@ import { InboxPage } from './pages/InboxPage'
 import { ListingPage } from './pages/ListingPage'
 import { NewListingPage } from './pages/NewListingPage'
 import { AboutPage } from './pages/AboutPage'
+import { SettingsPage } from './pages/SettingsPage'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/anuncio/:listingId" element={<ListingPage />} />
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/sobre" element={<AboutPage />} />
+        <Route path="/configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

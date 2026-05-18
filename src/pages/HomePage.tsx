@@ -8,6 +8,7 @@ import {
 } from 'framer-motion'
 import { useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { SafeImage } from '../components/SafeImage'
 import { HOME_GALLERY_IMAGES } from '../data/homeGallery'
 import './HomeLanding.css'
 
@@ -29,7 +30,7 @@ function MarqueeRow({
       >
         {loop.map((src, i) => (
           <figure key={`${src}-${i}`} className="landMarqueeFig">
-            <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+            <SafeImage src={src} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed={`marquee-${i}`} />
           </figure>
         ))}
       </div>
@@ -82,7 +83,7 @@ function ParallaxBand({
   return (
     <section ref={ref} className="landParallaxBand">
       <motion.div className="landParallaxBand__bg" style={{ y: yImg, scale: imgScale, opacity: imgOpacity }}>
-        <img src={image} alt="" decoding="async" draggable={false} />
+        <SafeImage src={image} alt="" decoding="async" draggable={false} fallbackSeed="parallax" />
         <div className="landParallaxBand__bgVeil" />
       </motion.div>
       <motion.div className="landParallaxBand__panel" style={{ y: panelY }}>
@@ -124,7 +125,7 @@ function GlassCard({
       }}
     >
       <div className="landGlassCard__media" aria-hidden>
-        <img src={image} alt="" loading="lazy" decoding="async" draggable={false} />
+        <SafeImage src={image} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed="glass" />
         <div className="landGlassCard__scrim" />
       </div>
       <div className="landGlassCard__glass">
@@ -213,7 +214,7 @@ export function HomePage() {
         <div className="landHeroFloatImgs" aria-hidden>
           {floatImgs.map((src, i) => (
             <div key={src + i} className="landFloatCard" style={{ animationDelay: `${-i * 0.7}s` }}>
-              <img src={src} alt="" decoding="async" draggable={false} />
+              <SafeImage src={src} alt="" decoding="async" draggable={false} fallbackSeed={`float-${i}`} />
             </div>
           ))}
         </div>
@@ -323,7 +324,7 @@ export function HomePage() {
       <div className="landMosaic" role="presentation">
         {imgs.map((src, i) => (
           <div key={src + i} className="landMosaicCell">
-            <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+            <SafeImage src={src} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed={`mosaic-${i}`} />
           </div>
         ))}
       </div>
@@ -425,11 +426,11 @@ export function HomePage() {
             <div className="landOrbitRing" />
             {orbitRing.map((src, i) => (
               <div key={src + i} className="landOrbitImg" style={{ animationDelay: `${-i * 4}s` }}>
-                <img src={src} alt="" decoding="async" draggable={false} />
+                <SafeImage src={src} alt="" decoding="async" draggable={false} fallbackSeed={`float-${i}`} />
               </div>
             ))}
             <div className="landOrbitCenter">
-              <img src={centerImg} alt="" decoding="async" draggable={false} />
+              <SafeImage src={centerImg} alt="" decoding="async" draggable={false} fallbackSeed="orbit-center" />
             </div>
           </div>
 
@@ -459,6 +460,7 @@ export function HomePage() {
             <motion.article
               className="landStepCard"
               animate={{ rotate: [0, 0.28, 0, -0.28, 0] }}
+          
               transition={{ duration: 10.5, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
             >
               <div className="landStepNum">03</div>
@@ -492,7 +494,7 @@ export function HomePage() {
         </div>
         <div className="landCtaMini">
           {ctaMini.map((src, i) => (
-            <img key={src + i} src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+            <SafeImage key={src + i} src={src} alt="" loading="lazy" decoding="async" draggable={false} fallbackSeed={`cta-${i}`} />
           ))}
         </div>
         <p className="landCtaFoot">

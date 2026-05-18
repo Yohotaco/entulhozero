@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useSettings } from '../settings/SettingsContext'
 import './PhotoCursor.css'
 
-/** Esfera + holofote que segue o mouse em zonas de foto (`data-photo-zone` ou `.photo-zone`). */
+/** Cursor estilo ConfirmAí: ponto + anel + bloom (luz). */
 export function PhotoCursor() {
   const { settings } = useSettings()
   const [active, setActive] = useState(false)
@@ -18,11 +18,12 @@ export function PhotoCursor() {
     const onMove = (e: MouseEvent) => {
       target.current = { x: e.clientX, y: e.clientY }
 
-      if (settings.photoCursorOnlyInZones) {
-        const el = document.elementFromPoint(e.clientX, e.clientY)
-        setActive(!!el?.closest('[data-photo-zone], .photo-zone'))
-      } else {
+      if (!settings.photoCursorOnlyInZones) {
         setActive(true)
+      } else {
+        const el = document.elementFromPoint(e.clientX, e.clientY)
+        const inZone = !!el?.closest('[data-photo-zone], .photo-zone, .landRoot')
+        setActive(inZone)
       }
 
       if (settings.reduceMotion) {
@@ -33,8 +34,8 @@ export function PhotoCursor() {
       if (raf.current != null) cancelAnimationFrame(raf.current)
       raf.current = requestAnimationFrame(() => {
         setPos((p) => ({
-          x: p.x + (target.current.x - p.x) * 0.22,
-          y: p.y + (target.current.y - p.y) * 0.22,
+          x: p.x + (target.current.x - p.x) * 0.28,
+          y: p.y + (target.current.y - p.y) * 0.28,
         }))
       })
     }
@@ -51,24 +52,23 @@ export function PhotoCursor() {
 
   if (!enabled) return null
 
+  const dot = settings.photoCursorSphereSize
+  const ring = settings.photoCursorRingSize || Math.round(dot * 3.25)
+
   const style = {
     '--pc-x': `${pos.x}px`,
     '--pc-y': `${pos.y}px`,
-    '--pc-size': `${settings.photoCursorSphereSize}px`,
+    '--pc-dot': `${dot}px`,
+    '--pc-ring': `${ring}px`,
     '--pc-radius': `${settings.photoCursorLightRadius}px`,
     '--pc-intensity': String(settings.photoCursorLightIntensity),
   } as CSSProperties
 
   return (
-    <motionLayer active={active} style={style} />
-  )
-}
-
-function motionLayer({ active, style }: { active: boolean; style: CSSProperties }) {
-  return (
     <div className={`photoCursorLayer${active ? ' photoCursorLayer--on' : ''}`} style={style} aria-hidden>
-      <div className="photoCursorLight" />
-      <div className="photoCursorSphere" />
+      <div className="photoCursorBloom" />
+      <div className="photoCursorRing" />
+      <div className="photoCursorDot" />
     </div>
   )
 }

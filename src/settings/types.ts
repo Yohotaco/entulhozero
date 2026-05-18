@@ -13,7 +13,8 @@ export type AppSettings = {
 
   // Cursor foto (esfera + luz)
   photoCursorEnabled: boolean
-  photoCursorSphereSize: number
+  photoCursorSphereSize: number // tamanho do ponto central (px)
+  photoCursorRingSize: number
   photoCursorLightRadius: number
   photoCursorLightIntensity: number
   photoCursorOnlyInZones: boolean

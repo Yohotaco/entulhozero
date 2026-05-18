@@ -36,6 +36,9 @@ export function Navbar() {
           <NavLink to="/sobre" className={({ isActive }) => (isActive ? 'active' : undefined)}>
             Sobre
           </NavLink>
+          <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+            Config
+          </NavLink>
         </nav>
 
         <div className="userPill">

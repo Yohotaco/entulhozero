@@ -9,7 +9,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   largeTouchTargets: false,
 
   photoCursorEnabled: true,
-  photoCursorSphereSize: 18,
+  photoCursorSphereSize: 8,
+  photoCursorRingSize: 26,
   photoCursorLightRadius: 140,
   photoCursorLightIntensity: 0.55,
   photoCursorOnlyInZones: true,
