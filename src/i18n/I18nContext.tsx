@@ -1,11 +1,11 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useSettings } from '../settings/SettingsContext'
 import type { LocaleCode } from './locales'
-import { getTranslations, type TranslationKeys } from './locales'
+import { getTranslations, type TranslationKey } from './locales'
 
 type I18nContextValue = {
   locale: LocaleCode
-  t: (key: TranslationKeys) => string
+  t: (key: TranslationKey) => string
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null)

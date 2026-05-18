@@ -147,7 +147,7 @@ function SettingsPageBody({
   resetSettings: () => void
   saveNow: () => void
   savedLabel: string
-  t: (key: import('../i18n/locales').TranslationKeys) => string
+  t: (key: import('../i18n/locales').TranslationKey) => string
   accentPreview: string
 }) {
   const importRef = useRef<HTMLInputElement>(null)

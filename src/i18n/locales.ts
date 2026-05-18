@@ -46,7 +46,7 @@ export const LOCALE_LABELS: Record<LocaleCode, string> = {
   ur: 'اردو',
 }
 
-export type TranslationKeys = {
+export type TranslationMessages = {
   brandTag: string
   navExplore: string
   navNew: string
@@ -110,7 +110,9 @@ export type TranslationKeys = {
   restoreConfirm: string
 }
 
-type Dict = Record<TranslationKeys, string>
+export type TranslationKey = keyof TranslationMessages
+
+type Dict = TranslationMessages
 
 const pt: Dict = {
   brandTag: 'Sobras de obra perto de você',
