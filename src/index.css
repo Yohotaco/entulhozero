@@ -342,6 +342,20 @@ textarea {
   gap: 14px;
 }
 
+.listingDetailPhoto {
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #e2e8f0;
+}
+
+.listingDetailPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .listingCardThumb {
   height: 140px;
   border-radius: 12px;

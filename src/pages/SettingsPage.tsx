@@ -111,11 +111,17 @@ export function SettingsPage() {
   )
 
   return (
-    <motionLayerSettingsPage settings={settings} setSetting={setSetting} patchSettings={patchSettings} resetSettings={resetSettings} accentPreview={accentPreview} />
+    <SettingsPageBody
+      settings={settings}
+      setSetting={setSetting}
+      patchSettings={patchSettings}
+      resetSettings={resetSettings}
+      accentPreview={accentPreview}
+    />
   )
 }
 
-function motionLayerSettingsPage({
+function SettingsPageBody({
   settings,
   setSetting,
   patchSettings,

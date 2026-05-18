@@ -9,7 +9,10 @@ import {
   listMessages,
   sendMessage,
 } from '../lib/db'
+import { SafeImage } from '../components/SafeImage'
+import { getCategoryImage } from '../data/homeGallery'
 import { useDbTick } from '../hooks/useDbTick'
+import { useSettings } from '../settings/SettingsContext'
 import { useNavigate } from 'react-router-dom'
 
 export function ListingPage() {
@@ -21,6 +24,7 @@ export function ListingPage() {
 
   const owner = useMemo(() => (listing ? getUser(listing.ownerId) : null), [listing])
   const isMine = listing && listing.ownerId === me.id
+  const { settings } = useSettings()
 
   const [text, setText] = useState('')
 
@@ -85,6 +89,15 @@ export function ListingPage() {
 
       <div className="grid2">
         <div className="card">
+          {settings.listingShowThumbnails ? (
+            <div className="listingDetailPhoto photo-zone" data-photo-zone>
+              <SafeImage
+                src={listing.imageUrl || getCategoryImage(listing.category)}
+                alt=""
+                fallbackSeed={listing.category}
+              />
+            </div>
+          ) : null}
           <h2>Descrição</h2>
           <p className="muted" style={{ whiteSpace: 'pre-wrap' }}>
             {listing.description}
