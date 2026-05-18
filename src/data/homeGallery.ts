@@ -1,27 +1,55 @@
-/** URLs de preview (Unsplash) — construção, materiais, reaproveitamento */
-export const HOME_GALLERY_IMAGES: string[] = [
-  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1595846519845-68cfee5657de?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1504917595217-d002dc9530e3?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1615876234889-86d58b93a883?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600585152915-d0bec44b2fb6?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1503389152881-f93127edcb38?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-151345763ada2-e0faade065c6?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1581092162384-e8332242292b?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1565007574301-fcbbbf450bad?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600607687644-aac4cd656e1b?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?auto=format&fit=crop&w=800&q=80',
-]
+/** Imagens da home — picsum com seed estável (não quebra como Unsplash aleatório). */
+const GALLERY_SEEDS = [
+  'obra-telha-1',
+  'obra-madeira-2',
+  'construcao-3',
+  'reforma-4',
+  'material-5',
+  'canteiro-6',
+  'reciclagem-7',
+  'sustentavel-8',
+  'telhado-9',
+  'tijolo-10',
+  'ferro-11',
+  'cimento-12',
+  'tinta-13',
+  'pvc-14',
+  'vidro-15',
+  'predio-16',
+  'casa-17',
+  'garagem-18',
+  'entulho-19',
+  'reuso-20',
+  'bairro-21',
+  'vitoria-22',
+  'circular-23',
+  'verde-24',
+] as const
+
+export function getGalleryImageUrl(seed: string, w = 800, h = 600): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${w}/${h}`
+}
+
+export function getPlaceholderImage(seed = 'placeholder'): string {
+  return getGalleryImageUrl(seed, 800, 600)
+}
+
+export const HOME_GALLERY_IMAGES: string[] = GALLERY_SEEDS.map((s) => getGalleryImageUrl(s, 800, 600))
+
+/** Categoria → seed visual para cards de anúncio sem foto */
+export const CATEGORY_IMAGE_SEEDS: Record<string, string> = {
+  telha: 'cat-telha',
+  tijolo: 'cat-tijolo',
+  madeira: 'cat-madeira',
+  ferro: 'cat-ferro',
+  cimento: 'cat-cimento',
+  tinta: 'cat-tinta',
+  pvc: 'cat-pvc',
+  vidro: 'cat-vidro',
+  outro: 'cat-outro',
+}
+
+export function getCategoryImage(category: string): string {
+  const seed = CATEGORY_IMAGE_SEEDS[category] ?? 'cat-outro'
+  return getGalleryImageUrl(seed, 640, 420)
+}

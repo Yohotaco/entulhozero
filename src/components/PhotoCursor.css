@@ -1,0 +1,57 @@
+.photoCursorLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.photoCursorLayer--on {
+  opacity: 1;
+}
+
+.photoCursorLight {
+  position: fixed;
+  left: var(--pc-x);
+  top: var(--pc-y);
+  width: calc(var(--pc-radius) * 2);
+  height: calc(var(--pc-radius) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, calc(0.85 * var(--pc-intensity))) 0%,
+    rgba(74, 222, 128, calc(0.35 * var(--pc-intensity))) 28%,
+    rgba(56, 189, 248, calc(0.12 * var(--pc-intensity))) 52%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  filter: blur(2px);
+}
+
+.photoCursorSphere {
+  position: fixed;
+  left: var(--pc-x);
+  top: var(--pc-y);
+  width: var(--pc-size);
+  height: var(--pc-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, #fff 0%, #bbf7d0 35%, #22c55e 70%, #14532d 100%);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.35),
+    0 0 18px rgba(74, 222, 128, 0.65),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+html[data-photo-cursor='1'] .photo-zone,
+html[data-photo-cursor='1'] [data-photo-zone] {
+  cursor: none;
+}
+
+@media (pointer: coarse) {
+  .photoCursorLayer {
+    display: none;
+  }
+}
